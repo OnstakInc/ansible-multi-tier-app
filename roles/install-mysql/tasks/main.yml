@@ -27,7 +27,7 @@
     mode: 0755
 
 - name: Update Host Address In Database Dump
-  shell: sed -i 's/localhost\/devita/{{ groups['app'][0] }}\/devita/g' /tmp/database.sql
+  shell: sed -i 's/localhost\/devita/{{ groups['app'][0] }}/g' /tmp/database.sql
 
 - name: Update Localhost To App Server
   shell: sed -i 's/localhost/{{ groups['app'][0] }}/g' /tmp/database.sql
