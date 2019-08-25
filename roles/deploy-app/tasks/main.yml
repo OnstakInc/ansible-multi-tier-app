@@ -6,17 +6,17 @@
   yum: name=wget state=present
 
 - name: Creates Directory
-  file: path=/var/www/html state=directory
+  file: path=/var/www/html/devita state=directory
 
 - name: Extract Wordpress Application
   unarchive:
     src: wordpress.zip
-    dest: /var/www/html
+    dest: /var/www/html/devita
 
 - name: Copy Config File
   template:
     src: wp-config.php.j2
-    dest: /var/www/html/wp-config.php
+    dest: /var/www/html/devita/wp-config.php
     mode: 0755
     
 - name: Set Apache Directory Permissions
