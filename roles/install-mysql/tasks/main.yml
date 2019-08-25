@@ -26,6 +26,9 @@
     dest: /tmp/database.sql
     mode: 0755
 
+- name: Update Host Address In Database Dump
+  shell: sed -i 's/localhost\/devita/{{ groups['db'][0] }}/g' /tmp/database.sql
+
 - name: Validate Initialization Script
   shell: sed -i -e 's/\r$//' /tmp/configure-mysql.sh
 
