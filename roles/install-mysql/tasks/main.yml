@@ -1,0 +1,49 @@
+---
+- name: Add MySQL Repositories
+  yum: name=https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm state=present
+
+- name: Install MySQL Server
+  yum: name=mysql-community-server state=present
+
+- name: Remove Old Data Directory
+  file: path=/var/lib/mysql state=absent
+
+- name: Remove Old Log Directory
+  file: path=/var/log/mysqld.log state=absent
+
+- name: Start and Enable MySQL Service
+  service: name=mysqld state=restarted enabled=yes
+
+- name: Copy Initialization Script
+  copy:
+    src: configure-mysql.sh
+    dest: /tmp/configure-mysql.sh
+    mode: 0755
+
+- name: Copy Database Dump
+  copy:
+    src: database.sql
+    dest: /tmp/database.sql
+    mode: 0755
+
+- name: Validate Initialization Script
+  shell: sed -i -e 's/\r$//' /tmp/configure-mysql.sh
+
+- name: Execute Initialization Script
+  shell: /bin/bash /tmp/configure-mysql.sh
+
+- name: Set SeLinux To Permissive
+  shell: setenforce 0
+  ignore_errors: yes
+
+- name: Update SeLinux Configurations
+  lineinfile: 
+    dest: /etc/selinux/config
+    regexp: '^SELINUX=enforcing$' 
+    line: 'SELINUX=disabled'
+
+- name: Add MySQL Firewall Rule
+  firewalld: port=3306/tcp permanent=true state=enabled zone=public
+
+- name: Reload Firewalld Service
+  command: "firewall-cmd --reload"

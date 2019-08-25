@@ -1,0 +1,28 @@
+---
+- name: Install Apache HTTP Server
+  yum: name=httpd state=present update_cache=yes
+
+- name: Set SeLinux To Permissive
+  shell: setenforce 0
+  ignore_errors: yes
+
+- name: Update SeLinux Configurations
+  lineinfile: 
+    dest: /etc/selinux/config
+    regexp: '^SELINUX=enforcing$' 
+    line: 'SELINUX=disabled'
+
+- name: Apache HTTP Allow Override
+  shell: sed -i 's/AllowOverride None/AllowOverride All/g' /etc/httpd/conf/httpd.conf
+
+- name: Start and Enable Apache HTTP Service
+  service: name=httpd state=started enabled=yes
+
+- name: Add HTTP Firewall Rule
+  firewalld: port=80/tcp permanent=true state=enabled zone=public
+
+- name: Add HTTPS Firewall Rule
+  firewalld: port=443/tcp permanent=true state=enabled zone=public
+
+- name: Reload Firewalld Service
+  command: "firewall-cmd --reload"

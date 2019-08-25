@@ -1,0 +1,22 @@
+---
+  - hosts: lb
+    become: true
+    roles:
+      - install-nginx
+
+  - hosts: app
+    become: true
+    roles:
+      - install-php
+      - install-apache
+      - deploy-app
+
+  - hosts: cache
+    become: true
+    roles:
+      - install-redis
+
+  - hosts: db
+    become: true
+    roles:
+      - install-mysql

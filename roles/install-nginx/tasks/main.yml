@@ -1,0 +1,21 @@
+---
+- name: Install NGINX Server
+  yum: name=nginx state=present update_cache=yes
+
+- name: Copy NGINX Config File
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: 0755
+
+- name: Start and Enable NGINX Service
+  service: name=nginx state=started enabled=yes
+
+- name: Add HTTP Firewall Rule
+  firewalld: port=80/tcp permanent=true state=enabled zone=public
+
+- name: Add HTTPS Firewall Rule
+  firewalld: port=443/tcp permanent=true state=enabled zone=public
+
+- name: Reload Firewalld Service
+  command: "firewall-cmd --reload"
