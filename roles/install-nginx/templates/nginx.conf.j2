@@ -36,9 +36,7 @@ http {
     include /etc/nginx/conf.d/*.conf;
 
     upstream myapp01 {
-        {% for node in groups['app'] %}
-            server {{ node }}:80;
-        {% endfor %}
+        server {{ groups['app'][0] }}:80;
     }
 
     server {
